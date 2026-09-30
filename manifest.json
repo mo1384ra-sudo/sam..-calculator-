@@ -1,0 +1,27 @@
+{
+  "name": "محاسبه‌گر مصرف سم",
+  "short_name": "محاسبه‌گر سم",
+  "description": "محاسبه‌گر مصرف سم، آب موردنیاز و مساحت زمین",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f3ef",
+  "theme_color": "#8a5a3b",
+  "orientation": "portrait",
+  "lang": "fa",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/RTx5Vrd9/1.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.ibb.co/RTx5Vrd9/1.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}

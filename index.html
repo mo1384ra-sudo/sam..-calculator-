@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#8a5a3b">
+  <meta name="description" content="محاسبه‌گر مصرف سم، آب موردنیاز و مساحت زمین">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <title>محاسبه‌گر مصرف سم</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">ابزار کشاورزی</div>
+        <h1>محاسبه‌گر مصرف سم</h1>
+      </div>
+      <button class="icon-btn" type="button" aria-label="صفحه اصلی" onclick="showPage('dashboard')">⌂</button>
+    </header>
+
+    <section id="dashboard" class="page active">
+      <div class="hero">
+        <div class="hero-badge">🌱</div>
+        <h2>داشبورد اصلی</h2>
+        <p>محاسبات موردنیاز سمپاشی را سریع و ساده انجام دهید.</p>
+      </div>
+
+      <div class="dashboard-grid">
+        <button class="feature-card" onclick="showPage('spray')">
+          <span class="feature-icon">🧪</span>
+          <span class="feature-title">محاسبه مصرف سم</span>
+          <span class="feature-desc">غلظتی یا مصرف در هکتار</span>
+        </button>
+
+        <button class="feature-card" onclick="showPage('water')">
+          <span class="feature-icon">💧</span>
+          <span class="feature-title">محاسبه آب موردنیاز</span>
+          <span class="feature-desc">بر اساس مقدار سم خالص</span>
+        </button>
+
+        <button class="feature-card" onclick="showPage('area')">
+          <span class="feature-icon">🚜</span>
+          <span class="feature-title">محاسبه مساحت زمین</span>
+          <span class="feature-desc">مترمربع و هکتار</span>
+        </button>
+
+        <button class="feature-card" onclick="showPage('history')">
+          <span class="feature-icon">📋</span>
+          <span class="feature-title">سابقه محاسبات</span>
+          <span class="feature-desc">نتایج ذخیره‌شده روی دستگاه</span>
+        </button>
+
+        <button class="feature-card feature-card-wide" onclick="showPage('guide')">
+          <span class="feature-icon">📖</span>
+          <span class="feature-title">راهنمای استفاده</span>
+          <span class="feature-desc">توضیحات و نکات مهم برنامه</span>
+        </button>
+      </div>
+
+      <div class="notice">
+        <strong>⚠️ هشدار ایمنی</strong>
+        <p>هنگام کار با سموم، برچسب محصول و دستورالعمل ایمنی آن را رعایت کنید و از وسایل حفاظت فردی مناسب استفاده کنید.</p>
+      </div>
+    </section>
+
+    <section id="spray" class="page">
+      <div class="page-heading">
+        <button class="back-btn" onclick="showPage('dashboard')">→</button>
+        <div>
+          <div class="eyebrow">محاسبه‌گر</div>
+          <h2>🧪 محاسبه مصرف سم</h2>
+        </div>
+      </div>
+
+      <div class="segmented">
+        <button id="tabA" class="segment active" onclick="setSprayMode('a')">حالت غلظتی</button>
+        <button id="tabB" class="segment" onclick="setSprayMode('b')">حالت هکتاری</button>
+      </div>
+
+      <div id="formA" class="calc-card">
+        <div class="card-title">حالت الف — غلظتی</div>
+        <p class="muted">برای توصیه‌هایی مانند «۲ در هزار»، عدد ۲۰۰۰ را وارد کنید.</p>
+
+        <label>ظرفیت مخزن سمپاش <span>(لیتر)</span>
+          <input id="tankA" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 400">
+        </label>
+
+        <label>میزان توصیه‌شده روی قوطی <span>(سی‌سی)</span>
+          <button class="help-link" type="button" onclick="openHelp('dose')">🛈 راهنما</button>
+          <input id="doseA" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 2000">
+        </label>
+
+        <button class="primary-btn" onclick="calculateA()">محاسبه</button>
+        <div id="resultA" class="result-box hidden"></div>
+      </div>
+
+      <div id="formB" class="calc-card hidden">
+        <div class="card-title">حالت ب — مصرف در هکتار</div>
+        <p class="muted">برای توصیه‌هایی مانند «۱٫۵ لیتر در هکتار» از این حالت استفاده کنید.</p>
+
+        <label>ظرفیت مخزن سمپاش <span>(لیتر)</span>
+          <input id="tankB" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 400">
+        </label>
+
+        <label>مقدار توصیه‌شده <span>(کیلوگرم یا لیتر/هکتار)</span>
+          <input id="doseB" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 1.5">
+        </label>
+
+        <label>عرض سمپاشی <span>(متر)</span>
+          <input id="widthB" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 12">
+        </label>
+
+        <label>سرعت حرکت <span>(متر در ۳۰ ثانیه)</span>
+          <button class="help-link" type="button" onclick="openHelp('speed')">🛈 راهنما</button>
+          <input id="speedB" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 25">
+        </label>
+
+        <label>جمع دبی نازل‌ها <span>(لیتر در ۳۰ ثانیه)</span>
+          <button class="help-link" type="button" onclick="openHelp('nozzle')">🛈 راهنما</button>
+          <input id="flowB" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 4">
+        </label>
+
+        <button class="primary-btn" onclick="calculateB()">محاسبه</button>
+        <div id="resultB" class="result-box hidden"></div>
+      </div>
+    </section>
+
+    <section id="water" class="page">
+      <div class="page-heading">
+        <button class="back-btn" onclick="showPage('dashboard')">→</button>
+        <div><div class="eyebrow">محاسبه‌گر</div><h2>💧 محاسبه آب موردنیاز</h2></div>
+      </div>
+      <div class="calc-card">
+        <div class="card-title">آب لازم برای مقدار سم خالص</div>
+        <p class="muted">اگر مقدار سم خالص را در اختیار دارید، حجم آب لازم را بر اساس غلظت توصیه‌شده محاسبه کنید.</p>
+
+        <label>مقدار سم خالص <span>(لیتر یا کیلوگرم)</span>
+          <input id="waterDose" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 2">
+        </label>
+
+        <label>غلظت توصیه‌شده <span>(در هزار)</span>
+          <input id="waterRate" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 2">
+        </label>
+
+        <button class="primary-btn" onclick="calculateWater()">محاسبه</button>
+        <div id="waterResult" class="result-box hidden"></div>
+      </div>
+    </section>
+
+    <section id="area" class="page">
+      <div class="page-heading">
+        <button class="back-btn" onclick="showPage('dashboard')">→</button>
+        <div><div class="eyebrow">محاسبه‌گر</div><h2>🚜 محاسبه مساحت زمین</h2></div>
+      </div>
+      <div class="calc-card">
+        <div class="card-title">مساحت زمین</div>
+
+        <label>روش محاسبه
+          <select id="areaMethod" onchange="toggleAreaMethod()">
+            <option value="rectangle">مستطیل</option>
+            <option value="square">مربع</option>
+          </select>
+        </label>
+
+        <label>طول زمین <span>(متر)</span>
+          <input id="areaLength" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 100">
+        </label>
+
+        <label id="areaWidthWrap">عرض زمین <span>(متر)</span>
+          <input id="areaWidth" type="number" min="0" step="any" inputmode="decimal" placeholder="مثلاً 50">
+        </label>
+
+        <button class="primary-btn" onclick="calculateArea()">محاسبه</button>
+        <div id="areaResult" class="result-box hidden"></div>
+      </div>
+    </section>
+
+    <section id="history" class="page">
+      <div class="page-heading">
+        <button class="back-btn" onclick="showPage('dashboard')">→</button>
+        <div><div class="eyebrow">ذخیره روی دستگاه</div><h2>📋 سابقه محاسبات</h2></div>
+      </div>
+      <div class="history-card">
+        <div class="history-head">
+          <p>نتایج محاسبات شما روی همین دستگاه ذخیره می‌شوند.</p>
+          <button class="danger-outline" onclick="clearHistory()">پاک کردن همه</button>
+        </div>
+        <div id="historyList"></div>
+      </div>
+    </section>
+
+    <section id="guide" class="page">
+      <div class="page-heading">
+        <button class="back-btn" onclick="showPage('dashboard')">→</button>
+        <div><div class="eyebrow">راهنما</div><h2>📖 راهنمای استفاده</h2></div>
+      </div>
+
+      <div class="guide-card">
+        <article>
+          <h3>۱. محاسبه مصرف سم — حالت غلظتی</h3>
+          <p>وقتی روی قوطی سم نوشته «۲ در هزار»، یعنی برای هر ۱۰۰۰ لیتر آب، ۲ لیتر سم. در این برنامه باید عدد <strong>۲۰۰۰</strong> را در قسمت سی‌سی وارد کنید.</p>
+        </article>
+        <article>
+          <h3>۲. محاسبه مصرف سم — حالت هکتاری</h3>
+          <p>وقتی روی قوطی مقدار مصرف به‌صورت «لیتر یا کیلوگرم در هکتار» نوشته شده است، حالت هکتاری را انتخاب کنید و مشخصات سمپاش را وارد کنید.</p>
+        </article>
+        <article>
+          <h3>۳. محاسبه آب موردنیاز</h3>
+          <p>مقدار سم خالص و غلظت توصیه‌شده را وارد کنید تا حجم آب موردنیاز به‌دست آید.</p>
+        </article>
+        <article>
+          <h3>۴. محاسبه مساحت زمین</h3>
+          <p>برای زمین مستطیلی، طول و عرض را وارد کنید. برای زمین مربع، فقط طول یک ضلع کافی است.</p>
+        </article>
+        <article class="safety">
+          <h3>⚠️ هشدار ایمنی</h3>
+          <p>همیشه دستورالعمل روی برچسب محصول و مقررات محلی را رعایت کنید. هنگام کار با سموم از تجهیزات حفاظت فردی مناسب استفاده کنید.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <span>محاسبه‌گر مصرف سم</span>
+      <span>نسخه ۳٫۰</span>
+    </footer>
+  </main>
+
+  <div id="modal" class="modal hidden" onclick="closeModal(event)">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
